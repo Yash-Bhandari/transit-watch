@@ -1,0 +1,60 @@
+.content {
+  width: 100vw;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.header {
+  color: #ebe9e9;
+}
+
+.issueSelector {
+  display: flex;
+  flex-direction: column;
+}
+
+.issueList {
+  max-width: 400px;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+}
+
+.issue {
+  color: #ebe9e9;
+  cursor: pointer;
+  padding: 0 0.5rem;
+  margin: 0.5rem;
+  border: 2px solid green;
+  border-radius: 10px;
+  min-width: 100px;
+  text-align: center;
+  vertical-align: middle;
+  height: 3rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.issue.selected {
+  background-color: green;
+  color: white;
+}
+
+
+.detailTextInput {
+  display: inline-block;
+  width: 100%;
+  height: auto;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-family: Arial, sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+  resize: vertical;
+  color: black
+}
