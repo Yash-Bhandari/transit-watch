@@ -3,7 +3,11 @@ import xor from "lodash/xor";
 import { Dispatch, SetStateAction, useState } from "react";
 import { FaCheck, FaPlus } from "react-icons/fa";
 import { Button } from "../components/Button";
-import { CAPITAL_LINE_STATIONS, METRO_LINE_STATIONS, TRANSIT_STATIONS } from "../data";
+import {
+  CAPITAL_LINE_STATIONS,
+  METRO_LINE_STATIONS,
+  TRANSIT_STATIONS,
+} from "../data";
 import styles from "../styles/index.module.css";
 import { ReportingData } from "../types";
 
@@ -45,9 +49,7 @@ export default function Home() {
     <main className="w-full flex flex-col items-center text-center text-white">
       <h1 className={styles.header}>ETS Transit Watch</h1>
       <div className={styles.content}>
-        <p>Reports sent immediately to the Transit Watch hotline </p>
-        <hr className="mb-2" />
-        <div className="grid place-items-center">
+        <div className="grid place-items-center mx-2">
           {stage === 0 && (
             <>
               <h2>What are you reporting?</h2>
@@ -60,6 +62,10 @@ export default function Home() {
                   }))
                 }
               />
+              <p className="mt-8">You may select multiple options.</p>
+              <p>
+                Reports are forwarded immediately to the Transit Watch hotline{" "}
+              </p>
             </>
           )}
           {stages[stage] === "locationType" && (
@@ -74,14 +80,15 @@ export default function Home() {
               <Button
                 onClick={() => setStage(stage - 1)}
                 text="Back"
-                variant="secondary"
+                variant="outline"
+                color="primary"
                 disabled={data.issues.length === 0}
               />
             )}
             <Button
               onClick={() => setStage(stage + 1)}
               text="Continue"
-              variant="primary"
+              color="primary"
               disabled={!canProceed}
             />
           </div>
@@ -93,6 +100,7 @@ export default function Home() {
 
 const issueChoices = [
   "Drug Use",
+  "Violence",
   "Threatening Behaviour",
   "Obstruction",
   "Harassment",
@@ -142,24 +150,48 @@ const LocationInput = ({
   return (
     <>
       <div>
-        <label className="pr-2" htmlFor="station">
-          <input
-            type="radio"
-            value="station"
-            checked={data.locationType === "station"}
-            onChange={() => setLocationType("station")}
-          />
+        <div className="flex">
+          <button
+            onClick={() => setLocationType("station")}
+            className={clsx(
+              styles.issue,
+              data.locationType == "station" && styles.selected
+            )}
+          >
+            At a Station
+          </button>
+          <button
+            onClick={() => setLocationType("train")}
+            className={clsx(
+              styles.issue,
+              data.locationType === "train" && styles.selected
+            )}
+          >
+            On a Train
+          </button>
+        </div>
+        {/* <input
+          id="station"
+          type="radio"
+          value="station"
+          checked={data.locationType === "station"}
+          onChange={() => setLocationType("station")}
+          className="mr-2"
+        />
+        <label className="mr-3" htmlFor="station">
           At a station
         </label>
+
         <label htmlFor="train">
           <input
+            id="train"
             type="radio"
             value="train"
             checked={data.locationType === "train"}
             onChange={() => setLocationType("train")}
           />
           On a train
-        </label>
+        </label> */}
       </div>
 
       <div className="flex flex-col items-center space-y-2 m-4">
@@ -198,7 +230,7 @@ const LocationInput = ({
                   ? CAPITAL_LINE_STATIONS
                   : METRO_LINE_STATIONS
               }
-              value={data.station}
+              value={data.nextStation}
               setValue={(value) =>
                 setData((data) => ({ ...data, nextStation: value }))
               }
@@ -240,6 +272,7 @@ const SelectBox = ({ options, value, setValue, label }: SelectBoxProps) => {
         className="text-black p-2"
         onChange={(e) => setValue(e.target.value)}
       >
+        <option value="" disabled selected>Select</option>
         {options.map((option) => (
           <option key={option} className="text-black" value={option}>
             {option}
@@ -250,7 +283,7 @@ const SelectBox = ({ options, value, setValue, label }: SelectBoxProps) => {
   );
 };
 
-const FinalDetails = ({
+const Review = ({
   data,
   setData,
 }: {

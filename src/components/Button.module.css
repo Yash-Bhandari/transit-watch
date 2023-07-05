@@ -1,0 +1,26 @@
+:enabled.fill.primary {
+  background-color: var(--color1);
+}
+
+:enabled.outline.primary {
+  border-color: var(--color1);
+  color: var(--color1);
+}
+
+.fill.secondary {
+  background-color: var(--color2);
+}
+
+.outline {
+  border: 2px solid black;
+}
+
+.outline.secondary {
+  background-color: rgba(247, 169, 168, 0.5);
+  border-color: var(--reddish);
+  color: var(--reddish);
+}
+
+.fill {
+  background-color: var(--color1);
+}

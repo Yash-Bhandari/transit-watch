@@ -3,8 +3,10 @@
 @tailwind utilities;
 
 :root {
-  --color1: #007bff;
-  --color2: #6c757d;
+  --color1: #002E61;
+  --reddish: #F7A9A8;
+  --background: #121212;
+  --foreground: #1e1e1e;
 }
 
 /* Reset default styles */
@@ -19,7 +21,7 @@ body {
   font-family: Arial, sans-serif;
   line-height: 1.5;
   color: #333;
-  background-color: #444654;
+  background-color: var(--background);
 }
 
 h1,
@@ -28,13 +30,17 @@ h3,
 h4,
 h5,
 h6 {
-  margin: 0 0 1rem;
+  margin: .5rem 0 ;
   font-weight: 600;
 }
 
 h1 {
   font-size: 32px;
   color: #193a5a;
+}
+
+h2 {
+  font-size: 24px;
 }
 
 p {
