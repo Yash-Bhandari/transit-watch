@@ -9,6 +9,8 @@ export const formatReport = (
   out += issues.join(", ") + " ";
   if (report.locationType === "station")
     out += `at ${report.station} Station\n`;
+  if (report.locationType === "train")
+    out += `\n${report.route}\n Next stop: ${report.nextStation}\n`;
 
   // format the current time as hh:mm am/pm
   if (report.locationDetails) out += `Location: ${report.locationDetails}\n`;

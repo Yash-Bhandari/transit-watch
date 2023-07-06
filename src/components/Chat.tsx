@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Input, MessageBox } from "react-chat-elements";
 import "react-chat-elements/dist/main.css";
-import { FaSend } from 'react-icons/fa';
+import { FaPaperPlane } from "react-icons/fa";
 import { formatReport } from "../lib/utils";
 import { ReportingData } from "../types";
 
@@ -17,7 +17,16 @@ export interface ChatProps {
 export const Chat = ({ report }: ChatProps) => {
   const reportString = formatReport(report, { includeTime: false });
   const [messages, setMessages] = useState<Message[]>([
-    { from: "reporter", timestamp: new Date(), text: reportString },
+    {
+      from: "reporter",
+      timestamp: new Date(),
+      text: "You can chat here with an operator from Transit Watch when they come online.",
+    },
+    {
+      from: "reporter",
+      timestamp: new Date(),
+      text: "If you lose internet connection, you can refresh the page to get back to this chat.",
+    },
   ]);
   const [draft, setDraft] = useState("");
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -37,7 +46,7 @@ export const Chat = ({ report }: ChatProps) => {
     }
   };
   return (
-    <div>
+    <div className="text-black">
       {messages.map((message, index) => (
         <MessageBox
           key={index}
@@ -47,7 +56,15 @@ export const Chat = ({ report }: ChatProps) => {
           date={message.timestamp}
         />
       ))}
-      <Input placeholder="Type here..." multiline rightButtons={<button><FaSend</button>} />
+      <Input
+        placeholder="Type here..."
+        multiline
+        rightButtons={
+          <button>
+            <FaPaperPlane />
+          </button>
+        }
+      />
     </div>
   );
 };
