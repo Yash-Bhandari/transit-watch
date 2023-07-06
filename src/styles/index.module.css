@@ -6,15 +6,17 @@
   flex-direction: column;
   background-color: var(--foreground);
   border-radius: 10px;
+  padding-bottom: 1rem;
 }
 
 .content select {
-  padding: .5rem;
+  padding: 0.5rem;
   font-size: large;
 }
 
 .content input {
-  padding: .5rem;
+  padding: 0.5rem;
+  color: black;
 }
 
 .header {

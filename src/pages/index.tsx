@@ -8,16 +8,12 @@ import {
   METRO_LINE_STATIONS,
   TRANSIT_STATIONS,
 } from "../data";
+import apiClient from "../lib/apiClient";
+import { formatReport } from "../lib/utils";
 import styles from "../styles/index.module.css";
 import { ReportingData } from "../types";
 
-const stages = [
-  "issue",
-  "locationType",
-  "locationDetails",
-  "details",
-  "submit",
-];
+const stages = ["issue", "location", "submit"];
 
 type Stages = (typeof stages)[number];
 
@@ -28,23 +24,29 @@ export default function Home() {
     issues: [],
     route: "Capital - Clareview",
   });
+  const [customIssue, setCustomIssue] = useState<string>("");
 
   const [stage, setStage] = useState<number>(0);
 
   const locationTypeSetter = (type: "station" | "train") => () =>
     setData((old) => ({ ...old, locationType: type }));
 
-  const onSubmit = () => {
-    fetch("/api/submitReport", {
-      method: "POST",
-      body: JSON.stringify(data),
-    });
-  };
-
   let canProceed = true;
-  if (stage === 0 && data.issues.length === 0) canProceed = false;
+  if (stage === 0 && data.issues.length === 0 && customIssue.length < 3)
+    canProceed = false;
   if (stage === 1 && data.locationDetails === undefined) canProceed = false;
 
+  const fullReport = {
+    ...data,
+    issues: [...data.issues, customIssue],
+  };
+  const submit = () => {
+    apiClient.submitReport(fullReport);
+  };
+  const nextStage = () => {
+    if (stage === 2) submit();
+    if (stage !== 2) setStage(stage + 1);
+  };
   return (
     <main className="w-full flex flex-col items-center text-center text-white">
       <h1 className={styles.header}>ETS Transit Watch</h1>
@@ -61,6 +63,8 @@ export default function Home() {
                     issues: xor(data.issues, [issue]),
                   }))
                 }
+                customIssue={customIssue}
+                setCustomIssue={setCustomIssue}
               />
               <p className="mt-8">You may select multiple options.</p>
               <p>
@@ -68,10 +72,16 @@ export default function Home() {
               </p>
             </>
           )}
-          {stages[stage] === "locationType" && (
+          {stages[stage] === "location" && (
             <>
               <h2>Location</h2>
               <LocationInput data={data} setData={setData} />
+            </>
+          )}
+          {stages[stage] === "submit" && (
+            <>
+              <h2>Submit</h2>
+              <Review data={fullReport} setData={setData} />
             </>
           )}
 
@@ -82,12 +92,11 @@ export default function Home() {
                 text="Back"
                 variant="outline"
                 color="primary"
-                disabled={data.issues.length === 0}
               />
             )}
             <Button
-              onClick={() => setStage(stage + 1)}
-              text="Continue"
+              onClick={nextStage}
+              text={stage === 2 ? "Submit" : "Next"}
               color="primary"
               disabled={!canProceed}
             />
@@ -109,10 +118,14 @@ const issueChoices = [
 interface IssueSelectorProps {
   selectedIssues: string[];
   toggleSelect: (issue: string) => void;
+  customIssue?: string;
+  setCustomIssue?: Dispatch<SetStateAction<string>>;
 }
 const IssueSelector = ({
   selectedIssues,
   toggleSelect,
+  customIssue,
+  setCustomIssue,
 }: IssueSelectorProps) => {
   return (
     <div className={styles.issueSelector}>
@@ -132,7 +145,12 @@ const IssueSelector = ({
         ))}
       </div>
       <div className="mt-2">
-        Other: <input type="text" />
+        Other:{" "}
+        <input
+          type="text"
+          value={customIssue}
+          onChange={(e) => setCustomIssue(e.target.value)}
+        />
       </div>
     </div>
   );
@@ -170,28 +188,6 @@ const LocationInput = ({
             On a Train
           </button>
         </div>
-        {/* <input
-          id="station"
-          type="radio"
-          value="station"
-          checked={data.locationType === "station"}
-          onChange={() => setLocationType("station")}
-          className="mr-2"
-        />
-        <label className="mr-3" htmlFor="station">
-          At a station
-        </label>
-
-        <label htmlFor="train">
-          <input
-            id="train"
-            type="radio"
-            value="train"
-            checked={data.locationType === "train"}
-            onChange={() => setLocationType("train")}
-          />
-          On a train
-        </label> */}
       </div>
 
       <div className="flex flex-col items-center space-y-2 m-4">
@@ -212,10 +208,10 @@ const LocationInput = ({
             <SelectBox
               label="Route"
               options={[
-                "Capital - Clareview",
-                "Capital - Century Park",
-                "Metro - NAIT",
-                "Metro - Health Sciences",
+                "Capital Line - Clareview",
+                "Capital Line - Century Park",
+                "Metro Line - NAIT",
+                "Metro Line - Health Sciences",
               ]}
               value={data.route}
               setValue={(value) =>
@@ -234,20 +230,22 @@ const LocationInput = ({
               setValue={(value) =>
                 setData((data) => ({ ...data, nextStation: value }))
               }
+              placeholder="Select a Station"
             />
           </>
         )}
 
-        <label className="pt-2">Specific Location</label>
+        <label>Specific Location</label>
         <textarea
           className={styles.detailTextInput}
           rows={4}
           onChange={(e) =>
             setData((data) => ({ ...data, locationDetails: e.target.value }))
           }
+          value={data.locationDetails}
           placeholder={
             data.locationType === "station"
-              ? "Ex: On the platform near the west escalators"
+              ? "Ex: On the platform near the elevator"
               : "Ex: Middle of the last train car, left side"
           }
         />
@@ -261,18 +259,26 @@ interface SelectBoxProps {
   options: string[];
   value: string;
   setValue: (value: string) => void;
+  placeholder?: string;
 }
-const SelectBox = ({ options, value, setValue, label }: SelectBoxProps) => {
+const SelectBox = ({
+  options,
+  value,
+  setValue,
+  label,
+  placeholder = "Select an Option",
+}: SelectBoxProps) => {
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col w-full">
       <label>{label}</label>
-
       <select
         value={value}
         className="text-black p-2"
         onChange={(e) => setValue(e.target.value)}
       >
-        <option value="" disabled selected>Select</option>
+        <option value="" disabled selected>
+          {placeholder}
+        </option>
         {options.map((option) => (
           <option key={option} className="text-black" value={option}>
             {option}
@@ -292,24 +298,19 @@ const Review = ({
 }) => {
   return (
     <>
+      <div className="whitespace-pre border-b-white border-b-2 p-1 mb-1">{formatReport(data)}</div>
+      <label>Details</label>
       <textarea
         className={styles.detailTextInput}
         rows={4}
+        value={data.details}
         onChange={(e) =>
-          setData((data) => ({ ...data, locationDetails: e.target.value }))
+          setData((data) => ({ ...data, details: e.target.value }))
         }
-        placeholder="Clothes, hair, tattoos, etc."
+        placeholder="Identifying features (clothes, gender, hair, tattoos)"
       />
+      <label>(Optional) Your Name</label>
+      <input type="text" />
     </>
   );
-};
-
-const Stages = () => {};
-
-const formatData = (data: ReportingData): string => {
-  let out = "";
-  if (data.locationType === "station")
-    out += `Location: ${data.locationDetails}\n`;
-  if (data.locationDetails) out += `${data.locationDetails}`;
-  return out;
 };
