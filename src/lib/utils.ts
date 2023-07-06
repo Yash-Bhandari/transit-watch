@@ -9,7 +9,7 @@ export const formatReport = (report: ReportingData): string => {
 
   // format the current time as hh:mm am/pm
   if (report.locationDetails) out += `Location: ${report.locationDetails}\n`;
-  if (report.details) out += `${report.details}\n`;
+  if (report.details?.length > 1) out += `${report.details}\n`;
   out += currentTime;
   return out;
 };

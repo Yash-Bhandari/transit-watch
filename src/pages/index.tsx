@@ -51,7 +51,7 @@ export default function Home() {
     <main className="w-full flex flex-col items-center text-center text-white">
       <h1 className={styles.header}>ETS Transit Watch</h1>
       <div className={styles.content}>
-        <div className="grid place-items-center mx-2">
+        <div className="flex flex-col items-center mx-2">
           {stage === 0 && (
             <>
               <h2>What are you reporting?</h2>
@@ -68,7 +68,7 @@ export default function Home() {
               />
               <p className="mt-8">You may select multiple options.</p>
               <p>
-                Reports are forwarded immediately to the Transit Watch hotline{" "}
+                Reports are forwarded immediately to the Transit Watch hotline.
               </p>
             </>
           )}
@@ -96,7 +96,7 @@ export default function Home() {
             )}
             <Button
               onClick={nextStage}
-              text={stage === 2 ? "Submit" : "Next"}
+              text={stage === 2 ? "Submit" : "Continue"}
               color="primary"
               disabled={!canProceed}
             />
@@ -108,11 +108,11 @@ export default function Home() {
 }
 
 const issueChoices = [
-  "Drug Use",
   "Violence",
+  "Harassment",
   "Threatening Behaviour",
   "Obstruction",
-  "Harassment",
+  "Drug Use",
 ];
 
 interface IssueSelectorProps {
@@ -309,8 +309,6 @@ const Review = ({
         }
         placeholder="Identifying features (clothes, gender, hair, tattoos)"
       />
-      <label>(Optional) Your Name</label>
-      <input type="text" />
     </>
   );
 };
