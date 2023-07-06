@@ -7,3 +7,9 @@ export interface ReportingData {
   route?: string;
   nextStation?: string;
 }
+
+export interface Message {
+  from: "reporter" | "responder";
+  timestamp: Date;
+  text: string;
+}

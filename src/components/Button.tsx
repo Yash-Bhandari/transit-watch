@@ -1,6 +1,7 @@
 import clsx from "clsx";
 import React from "react";
 import styles from "./Button.module.css";
+import { Loading } from "./Loading";
 
 export interface ButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement> {
@@ -8,10 +9,12 @@ export interface ButtonProps
   color?: "primary" | "secondary";
   text?: string;
   className?: string;
+  loading?: boolean;
 }
 export const Button = (props: ButtonProps) => {
   const variant = props.variant || "fill";
   const color = props.color || "primary";
+  const loading = props.loading || false;
   return (
     <button
       {...props}
@@ -23,7 +26,7 @@ export const Button = (props: ButtonProps) => {
         props.className
       )}
     >
-      {props.text}
+      {loading ? <Loading /> : props.text}
     </button>
   );
 };

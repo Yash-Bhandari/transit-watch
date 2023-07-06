@@ -1,3 +1,7 @@
+.button {
+  width: 100px;
+  height: 40px;
+}
 :enabled.fill.primary {
   background-color: var(--color1);
 }

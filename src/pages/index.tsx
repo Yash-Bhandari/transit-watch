@@ -1,8 +1,10 @@
+import { useMutation } from "@tanstack/react-query";
 import clsx from "clsx";
 import xor from "lodash/xor";
 import { Dispatch, SetStateAction, useState } from "react";
 import { FaCheck, FaPlus } from "react-icons/fa";
 import { Button } from "../components/Button";
+import { Chat } from "../components/Chat";
 import {
   CAPITAL_LINE_STATIONS,
   METRO_LINE_STATIONS,
@@ -13,7 +15,7 @@ import { formatReport } from "../lib/utils";
 import styles from "../styles/index.module.css";
 import { ReportingData } from "../types";
 
-const stages = ["issue", "location", "submit"];
+const stages = ["issue", "location", "submit", "chat"];
 
 type Stages = (typeof stages)[number];
 
@@ -25,8 +27,11 @@ export default function Home() {
     route: "Capital - Clareview",
   });
   const [customIssue, setCustomIssue] = useState<string>("");
-
   const [stage, setStage] = useState<number>(0);
+
+  const mutation = useMutation({
+    mutationFn: apiClient.submitReport,
+  });
 
   const locationTypeSetter = (type: "station" | "train") => () =>
     setData((old) => ({ ...old, locationType: type }));
@@ -40,12 +45,11 @@ export default function Home() {
     ...data,
     issues: [...data.issues, customIssue],
   };
-  const submit = () => {
-    apiClient.submitReport(fullReport);
-  };
+  const submit = () => mutation.mutate(fullReport);
+
   const nextStage = () => {
     if (stage === 2) submit();
-    if (stage !== 2) setStage(stage + 1);
+    setStage(stage + 1);
   };
   return (
     <main className="w-full flex flex-col items-center text-center text-white">
@@ -84,23 +88,26 @@ export default function Home() {
               <Review data={fullReport} setData={setData} />
             </>
           )}
+          {stage === 3 && <Chat report={fullReport} />}
 
-          <div className="flex absolute bottom-3">
-            {stage !== 0 && (
+          {stage !== 3 && (
+            <div className="flex absolute bottom-3">
+              {stage !== 0 && (
+                <Button
+                  onClick={() => setStage(stage - 1)}
+                  text="Back"
+                  variant="outline"
+                  color="primary"
+                />
+              )}
               <Button
-                onClick={() => setStage(stage - 1)}
-                text="Back"
-                variant="outline"
+                onClick={nextStage}
+                text={stage === 2 ? "Submit" : "Continue"}
                 color="primary"
+                disabled={!canProceed}
               />
-            )}
-            <Button
-              onClick={nextStage}
-              text={stage === 2 ? "Submit" : "Continue"}
-              color="primary"
-              disabled={!canProceed}
-            />
-          </div>
+            </div>
+          )}
         </div>
       </div>
     </main>
@@ -298,7 +305,9 @@ const Review = ({
 }) => {
   return (
     <>
-      <div className="whitespace-pre border-b-white border-b-2 p-1 mb-1">{formatReport(data)}</div>
+      <div className="whitespace-pre-wrap border-b-white border-b-2 p-1 mb-1">
+        {formatReport(data)}
+      </div>
       <label>Details</label>
       <textarea
         className={styles.detailTextInput}
@@ -307,7 +316,7 @@ const Review = ({
         onChange={(e) =>
           setData((data) => ({ ...data, details: e.target.value }))
         }
-        placeholder="Identifying features (clothes, gender, hair, tattoos)"
+        placeholder="Incident details, identifying features (clothes, gender, hair, tattoos)"
       />
     </>
   );
