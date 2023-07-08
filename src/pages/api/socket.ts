@@ -16,13 +16,14 @@ const initializeServerSocket = (res: NextApiResponse): Server => {
   const io = new Server(res.socket.server);
 
   io.on("connection", (socket) => {
-    socket.on("newMessage", (data) => {
+    socket.on("newMessage", (data, callback) => {
       const message = validateMessage(data);
       console.log("recieved message", message)
       if (message) {
         console.log("Forwarding message")
         socket.broadcast.emit("newMessage", data);
       }
+      callback()
     });
   });
   return io;
