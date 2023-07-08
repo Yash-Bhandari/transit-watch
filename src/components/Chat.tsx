@@ -9,27 +9,47 @@ import styles from "./Chat.module.css";
 
 const uidGenerator = new ShortUniqueId({ length: 16 });
 let socket: Socket;
+
+const addTabTitleNotification = (count: number) => {
+  document.title = `(${count}) Transit Watch`;
+};
+
 export interface ChatProps {
   report: ActiveReport;
   userType: "reporter" | "responder";
 }
 
 export const Chat = ({ report, userType }: ChatProps) => {
-  useEffect(() => {}, []);
-  const [messages, setMessages] = useState<Message[]>([]);
+  const [messages, setMessages] = useState<Message[] & { local?: boolean }>([]);
   const initializeSocket = async () => {
     await fetch("/api/socket");
     socket = io();
-    socket.on("connect", () => {
-      console.log("Connected!");
-    });
+    socket.emit("join", report.id);
 
     socket.on("newMessage", (message: Message) => {
       console.log("new message", message);
       setMessages((messages) => [...messages, message]);
+      if (Notification.permission === "granted") {
+        new Notification("New message from Transit Watch", {
+          body: message.text,
+        });
+      }
+      if (!document.hasFocus()) addTabTitleNotification(messages.length + 1);
     });
   };
-  useEffect(() => initializeSocket(), []);
+  useEffect(() => {
+    initializeSocket();
+    return () => {
+      socket?.disconnect();
+    };
+  }, []);
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      Notification.requestPermission();
+    }, 2000);
+    window.onfocus = () => (document.title = "Transit Watch");
+    return () => clearTimeout(timeout);
+  }, []);
   // const reportString = formatReport(report, { includeTime: false });
   const [draft, setDraft] = useState("Hello");
   const handleInputChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -72,7 +92,18 @@ export const Chat = ({ report, userType }: ChatProps) => {
         ))}
       </div>
       <div className={styles.inputField}>
-        <textarea rows={2} value={draft} onChange={handleInputChange} />
+        <textarea
+          placeholder="Type a message..."
+          rows={2}
+          value={draft}
+          onChange={handleInputChange}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              e.preventDefault();
+              handleSendMessage();
+            }
+          }}
+        />
         <Button onClick={handleSendMessage} text="Send" />
       </div>
     </div>

@@ -1,32 +1,39 @@
 import { Server } from "Socket.IO";
 import { NextApiRequest, NextApiResponse } from "next";
+import { addMessage, getReport } from "../../lib/activeReports";
 import { Message } from "../../types";
 
 const SocketHandler = (req: NextApiRequest, res: NextApiResponse) => {
   if (res.socket?.server?.io) {
     console.log("Socket is already running");
-  } else {
-    console.log("Socket is initializing");
-    res.socket.server.io = initializeServerSocket(res);
+    res.end();
   }
-  res.end();
-};
-
-const initializeServerSocket = (res: NextApiResponse): Server => {
+  console.log("Socket is initializing");
   const io = new Server(res.socket.server);
 
   io.on("connection", (socket) => {
+    // allows clients to join the room for their report
+    // messages for a report will only be sent to clients in that room
+    socket.on("join", (reportId) => {
+      if (getReport(reportId)) {
+        socket.join(reportId);
+        console.log("Client joined room", reportId);
+      }
+    });
     socket.on("newMessage", (data, callback) => {
       const message = validateMessage(data);
-      console.log("recieved message", message)
-      if (message) {
-        console.log("Forwarding message")
-        socket.broadcast.emit("newMessage", data);
+      if (!message) console.log("invalid message", data);
+      console.log("recieved message", message);
+      const isNewMessage = addMessage(message);
+      if (isNewMessage) {
+        console.log("Forwarding message");
+        socket.to(message.reportId).emit("newMessage", message);
       }
-      callback()
+      callback();
     });
   });
-  return io;
+  res.socket.server.io = io;
+  res.end();
 };
 
 const validateMessage = (message: any): Message | null => {
@@ -35,10 +42,11 @@ const validateMessage = (message: any): Message | null => {
     "from" in message &&
     "timestamp" in message &&
     "text" in message &&
-    "reportId" in message
+    "reportId" in message &&
+    "id" in message
   )
     return message;
-  console.log("invalid message", message)
+  console.log("invalid message", message);
   return null;
 };
 
