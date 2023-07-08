@@ -20,7 +20,7 @@ const stages = ["issue", "location", "submit", "chat"];
 type Stages = (typeof stages)[number];
 
 interface FormData {
-  locationType: "station" | "train";  
+  locationType: "station" | "train";
   station?: string;
   route?: string;
   issues: string[];
@@ -38,6 +38,7 @@ export default function Home() {
 
   const mutation = useMutation({
     mutationFn: apiClient.submitReport,
+    onSuccess: () => setStage(3),
   });
 
   const locationTypeSetter = (type: "station" | "train") => () =>
@@ -57,7 +58,7 @@ export default function Home() {
 
   const nextStage = () => {
     if (stage === 2) submit();
-    setStage(stage + 1);
+    else setStage(stage + 1);
   };
   return (
     <main className="w-full flex flex-col items-center text-center text-white">
@@ -96,7 +97,7 @@ export default function Home() {
               <Review data={fullReport} setData={setData} />
             </>
           )}
-          {stage === 3 && <Chat report={mutation.data} userType="reporter"/>}
+          {stage === 3 && <Chat report={mutation.data} userType="reporter" />}
 
           {stage !== 3 && (
             <div className="flex absolute bottom-3">

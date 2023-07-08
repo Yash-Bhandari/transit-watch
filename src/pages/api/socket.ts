@@ -7,7 +7,7 @@ const SocketHandler = (req: NextApiRequest, res: NextApiResponse) => {
   //@ts-ignore
   if (res.socket?.server?.io) {
     console.log("Socket is already running");
-    res.end();
+    return res.end();
   }
   console.log("Socket is initializing");
   //@ts-ignore
@@ -28,7 +28,7 @@ const SocketHandler = (req: NextApiRequest, res: NextApiResponse) => {
       console.log("recieved message", message);
       const isNewMessage = addMessage(message);
       if (isNewMessage) {
-        console.log("Forwarding message");
+        console.log("Forwarding message to" , message.reportId );
         socket.to(message.reportId).emit("newMessage", message);
       }
       callback();
