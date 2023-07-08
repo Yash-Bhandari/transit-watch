@@ -1,5 +1,6 @@
 import _ from "lodash";
 import { NextApiRequest, NextApiResponse } from "next";
+import { addReport } from "../../lib/activeReports";
 import { APIException, withErrorHandling } from "../../lib/apiUtils";
 import { formatReport } from "../../lib/utils";
 import { ReportingData } from "../../types";
@@ -9,8 +10,10 @@ const submitReport = (req: NextApiRequest, res: NextApiResponse) => {
   const report = validateReport(data);
   let text = formatReport(data);
   text += "\n View details at www.example.com/tw?id=a7bkdkdis";
+  const activeReport = addReport(report);
+  console.log(activeReport);
   // sendSMS(text);
-  return res.status(200).json({ message: "success" });
+  return res.status(200).json({ reportId: activeReport.id });
 };
 
 export default withErrorHandling(submitReport);

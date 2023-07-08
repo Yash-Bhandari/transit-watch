@@ -1,18 +1,28 @@
 import ShortUniqueId from "short-unique-id";
-import { Message, ReportingData } from "../types";
+import { ActiveReport, Message, ReportingData } from "../types";
+import { APIException } from "./apiUtils";
 
 interface DataStore {
   reports: Record<string, ActiveReport>;
 }
 
-interface ActiveReport {
-  id: string;
-  data: ReportingData;
-  messages: Message[];
-}
+const testReport: ActiveReport = {
+  id: "test",
+  data: {
+    issues: ["test issue"],
+    locationType: "station",
+    station: "Corona Station",
+    timestamp: Date.now() - 1000 * 60 * 5,
+    locationDetails: "On the platform",
+  },
+  messages: [],
+};
 
-const dataStore = {
-  reports: {},
+interface DataStore {
+  reports: Record<string, ActiveReport>;
+}
+const dataStore: DataStore = {
+  reports: { test: testReport },
 };
 
 const getReport = (id: string): ActiveReport => {
@@ -31,8 +41,15 @@ const addReport = (data: ReportingData): ActiveReport => {
 };
 
 const addMessage = (reportId: string, message: Message) => {
-  if (!(reportId in dataStore.reports)) throw new Error("Report not found");
-  dataStore.reports[reportId].messages.push(message);
+  if (!(reportId in dataStore.reports))
+    throw new APIException(
+      "Report with id " + reportId + " not found",
+      "report_not_found"
+    );
+  const report = dataStore.reports[reportId];
+  // ignore the message if it's a duplicate
+  // messages can be sent multiple times in order to have an "at least once" delivery guarantee
+  if (report.messages.some((m) => m.id === message.id)) return;
 };
 
 const uidGenerator = new ShortUniqueId({ length: 5 });
@@ -47,3 +64,6 @@ const generateReportId = () => {
   }
   return id;
 };
+
+export { addMessage, addReport, getReport };
+

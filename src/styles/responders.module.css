@@ -1,0 +1,15 @@
+.root {
+  color: #DBD8D3;
+  margin: 0 1rem;
+}
+.content {
+  display: flex;
+  gap: 1rem;
+}
+
+.reportData {
+  background-color: var(--foreground);
+  border-radius: 10px;
+  padding: .5rem 1rem;
+  align-self: flex-start;
+}

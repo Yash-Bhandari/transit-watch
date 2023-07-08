@@ -7,6 +7,10 @@ const submitReport = (report: ReportingData) => {
   });
 };
 
+// const sendMessage = (message: string) => {
+
+// }
+
 const apiClient = { submitReport };
 export default apiClient;
 
