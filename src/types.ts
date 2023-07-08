@@ -6,7 +6,7 @@ export interface ReportingData {
   station?: string;
   route?: string;
   nextStation?: string;
-  timestamp: number;
+  timestamp?: number;
 }
 
 export interface Message {

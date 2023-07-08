@@ -19,8 +19,15 @@ const stages = ["issue", "location", "submit", "chat"];
 
 type Stages = (typeof stages)[number];
 
+interface FormData {
+  locationType: "station" | "train";  
+  station?: string;
+  route?: string;
+  issues: string[];
+  locationDetails?: string;
+}
 export default function Home() {
-  const [data, setData] = useState<ReportingData>({
+  const [data, setData] = useState<FormData>({
     locationType: "station",
     station: "Corona",
     issues: [],
@@ -44,6 +51,7 @@ export default function Home() {
   const fullReport = {
     ...data,
     issues: [...data.issues, customIssue],
+    timestamp: Date.now(),
   };
   const submit = () => mutation.mutate(fullReport);
 
@@ -88,7 +96,7 @@ export default function Home() {
               <Review data={fullReport} setData={setData} />
             </>
           )}
-          {stage === 3 && <Chat report={fullReport} />}
+          {stage === 3 && <Chat report={mutation.data} userType="reporter"/>}
 
           {stage !== 3 && (
             <div className="flex absolute bottom-3">

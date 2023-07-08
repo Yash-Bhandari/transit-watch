@@ -5,10 +5,16 @@ import { formatTime } from "../lib/utils";
 import styles from "../styles/responders.module.css";
 import { ActiveReport } from "../types";
 
-interface RespondersProps {
+export default function Responders({
+  activeReport,
+}: {
   activeReport: ActiveReport;
-}
-export default function Responders({ activeReport }: RespondersProps) {
+}) {
+  // const router = useRouter();
+  // const reportId = router.query.id as string;
+  // const query = useQuery(["report", reportId], () =>
+  //   apiClient.fetchReport(reportId)
+  // );
   return (
     <div className={styles.root}>
       <h1>Transit Watch Live Chat</h1>
@@ -23,14 +29,14 @@ export default function Responders({ activeReport }: RespondersProps) {
   );
 }
 
-const ReportDisplay = ({ activeReport }: RespondersProps) => {
+const ReportDisplay = ({ activeReport }: { activeReport: ActiveReport }) => {
   const data = activeReport.data;
   const submitTime = new Date(data.timestamp);
   const locationUpdated = timeSinceHumanReadable(submitTime);
   return (
     <div className={styles.reportData}>
       <h2>Report Details</h2>
-      <hr className="my-3"/>
+      <hr className="my-3" />
       <p>Report ID: {activeReport.id}</p>
       <p>{data.issues}</p>
       {data.details && <p>{data.details}</p>}
@@ -60,6 +66,10 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   console.log(context.resolvedUrl);
   const id = context.query.id as string;
   const activeReport = getReport(id);
+  if (!activeReport)
+    return {
+      notFound: true,
+    };
   return {
     props: { activeReport },
   };

@@ -1,16 +1,16 @@
-import { ReportingData } from "../types";
+import { ActiveReport, ReportingData } from "../types";
 
-const submitReport = (report: ReportingData) => {
-  return fetch("/api/submitReport", {
+const submitReport = async (report: ReportingData) => {
+  const resp = await fetch("/api/submitReport", {
     method: "POST",
     body: JSON.stringify(report),
   });
+  return resp.json() as Promise<ActiveReport>;
 };
 
-// const sendMessage = (message: string) => {
+const fetchReport = (id: string) => {
+  return fetch(`/api/reports/${id}`);
+};
 
-// }
-
-const apiClient = { submitReport };
+const apiClient = { submitReport, fetchReport };
 export default apiClient;
-

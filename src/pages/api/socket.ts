@@ -4,11 +4,13 @@ import { addMessage, getReport } from "../../lib/activeReports";
 import { Message } from "../../types";
 
 const SocketHandler = (req: NextApiRequest, res: NextApiResponse) => {
+  //@ts-ignore
   if (res.socket?.server?.io) {
     console.log("Socket is already running");
     res.end();
   }
   console.log("Socket is initializing");
+  //@ts-ignore
   const io = new Server(res.socket.server);
 
   io.on("connection", (socket) => {
@@ -32,6 +34,7 @@ const SocketHandler = (req: NextApiRequest, res: NextApiResponse) => {
       callback();
     });
   });
+  //@ts-ignore
   res.socket.server.io = io;
   res.end();
 };

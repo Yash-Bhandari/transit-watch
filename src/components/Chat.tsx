@@ -82,6 +82,7 @@ export const Chat = ({ report, userType }: ChatProps) => {
     <div className={styles.chatBox}>
       <div className={styles.messages}>
         {messages.map((message, index) => (
+          //@ts-ignore
           <MessageBox
             key={index}
             position={message.from === userType ? "right" : "left"}
