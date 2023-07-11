@@ -6,9 +6,10 @@ if (!globalThis.db) {
     autoload: true,
     autosaveInterval: 1000 * 60 * 5,
   });
-  console.log('Creating new dbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb')
+  console.log('----------- Creating new db ------------')
   db.addCollection("reports");
   globalThis.db = db;
 }
 
 export default globalThis.db;
+

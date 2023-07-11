@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { MessageBox } from "react-chat-elements";
 import "react-chat-elements/dist/main.css";
 import ShortUniqueId from "short-unique-id";
@@ -17,9 +17,10 @@ const addTabTitleNotification = (count: number) => {
 export interface ChatProps {
   report: ActiveReport;
   userType: "reporter" | "responder";
+  announcements?: React.ReactNode; // shown in the chat window
 }
 
-export const Chat = ({ report, userType }: ChatProps) => {
+export const Chat = ({ report, userType, announcements }: ChatProps) => {
   const [messages, setMessages] = useState<Message[] & { local?: boolean }>([]);
   const initializeSocket = async () => {
     await fetch("/api/socket");
@@ -81,6 +82,7 @@ export const Chat = ({ report, userType }: ChatProps) => {
   return (
     <div className={styles.chatBox}>
       <div className={styles.messages}>
+        <div className="text-white">{announcements}</div>
         {messages.map((message, index) => (
           //@ts-ignore
           <MessageBox

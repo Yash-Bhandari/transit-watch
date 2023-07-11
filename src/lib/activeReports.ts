@@ -2,7 +2,7 @@ import ShortUniqueId from "short-unique-id";
 import { ActiveReport, Message, ReportingData } from "../types";
 import db from './database';
 
-const reports = db.getCollection<ActiveReport>("reports");
+const reports = (db as Loki).getCollection<ActiveReport>("reports");
 interface DataStore {
   reports: Record<string, ActiveReport>;
 }
@@ -81,13 +81,8 @@ const generateReportId = () => {
   return id;
 };
 
-// const deleteStaleReports = () => {
-//   const maxAgeMins = 30;
-//   const now = Date.now();
-//   const staleReports = Object.values(dataStore.reports).filter(
-//     (report) => now - report.data.timestamp > 1000 * 60 * maxAgeMins
-//   );
-//   staleReports.forEach((report) => {
-//     delete dataStore.reports[report.id];
-//   });
-// };
+export const deleteStaleReports = () => {
+  const maxAgeMins = 30;
+  const now = Date.now();
+  reports.removeWhere((report) => now - report.data.timestamp > 1000 * 60 * maxAgeMins);
+};

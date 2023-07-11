@@ -2,7 +2,6 @@ import _ from "lodash";
 import { NextApiRequest, NextApiResponse } from "next";
 import { addReport } from "../../lib/activeReports";
 import { APIException, withErrorHandling } from "../../lib/apiUtils";
-import { sendSMS } from "../../lib/sms";
 import { formatReport } from "../../lib/utils";
 import { ReportingData } from "../../types";
 
@@ -13,7 +12,7 @@ const submitReport = (req: NextApiRequest, res: NextApiResponse) => {
   const activeReport = addReport(report);
   text +=
     "\n Live chat here: " + getURL() + "/responders?id=" + activeReport.id;
-  sendSMS(text);
+  // sendSMS(text);
   return res.status(200).json(activeReport);
 };
 

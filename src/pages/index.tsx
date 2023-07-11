@@ -1,6 +1,7 @@
 import { useMutation } from "@tanstack/react-query";
 import clsx from "clsx";
 import xor from "lodash/xor";
+import { GetServerSideProps } from "next/types";
 import { Dispatch, SetStateAction, useState } from "react";
 import { FaCheck, FaPlus } from "react-icons/fa";
 import { Button } from "../components/Button";
@@ -11,7 +12,7 @@ import {
   TRANSIT_STATIONS,
 } from "../data";
 import apiClient from "../lib/apiClient";
-import { formatReport } from "../lib/utils";
+import { formatReport, getHost } from "../lib/utils";
 import styles from "../styles/index.module.css";
 import { ReportingData } from "../types";
 
@@ -26,7 +27,7 @@ interface FormData {
   issues: string[];
   locationDetails?: string;
 }
-export default function Home() {
+export default function Home({ host }: { host: string }) {
   const [data, setData] = useState<FormData>({
     locationType: "station",
     station: "Corona",
@@ -38,7 +39,10 @@ export default function Home() {
 
   const mutation = useMutation({
     mutationFn: apiClient.submitReport,
-    onSuccess: () => setStage(3),
+    onSuccess: () => {
+      localStorage.setItem("lastReport", JSON.stringify(fullReport));
+      setStage(3);
+    },
   });
 
   const locationTypeSetter = (type: "station" | "train") => () =>
@@ -97,7 +101,22 @@ export default function Home() {
               <Review data={fullReport} setData={setData} />
             </>
           )}
-          {stage === 3 && <Chat report={mutation.data} userType="reporter" />}
+          {stage === 3 && (
+            <Chat
+              report={mutation.data}
+              userType="reporter"
+              announcements={
+                <>
+                  <p>This is a live chat with an ETS operator.</p>
+                  <p>
+                    For testing purposes, you can open{" "}
+                    <a href={"/responders?id=" + mutation.data.id}>this link</a>{" "}
+                    in an incognito tab to see what it looks like for them.
+                  </p>
+                </>
+              }
+            />
+          )}
 
           {stage !== 3 && (
             <div className="flex absolute bottom-3">
@@ -329,4 +348,8 @@ const Review = ({
       />
     </>
   );
+};
+
+const getServerSideProps: GetServerSideProps = async (context) => {
+  return { props: { host: getHost() } };
 };

@@ -18,14 +18,19 @@ export const formatReport = (
   return out;
 };
 
-
 export const formatTime = (date: Date): string => {
   return date.toLocaleTimeString("en-US", {
     hour: "numeric",
     minute: "numeric",
     hour12: true,
   });
-}
+};
 
 // format the current time as hh:mm am/pm
 const currentTime = formatTime(new Date());
+
+export const getHost = () => {
+  if (process.env.NODE_ENV === "production")
+    return "https://transitwatch.bhandari.dev";
+  return "http://localhost:3000";
+};

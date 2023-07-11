@@ -18,11 +18,17 @@ export default function Responders({
   return (
     <div className={styles.root}>
       <h1>Transit Watch Live Chat</h1>
-      <p>
-        You are chatting with an ETS rider that does not have cell reception.
-      </p>
       <div className={styles.content}>
-        <Chat report={activeReport} userType="responder" />
+        <Chat
+          report={activeReport}
+          userType="responder"
+          announcements={
+            <p>
+              You are chatting with an ETS rider that does not have cell
+              reception.
+            </p>
+          }
+        />
         <ReportDisplay activeReport={activeReport} />
       </div>
     </div>

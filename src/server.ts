@@ -1,6 +1,7 @@
 import { createServer } from "http";
 import next from "next";
 import { parse } from "url";
+import { deleteStaleReports } from "./lib/activeReports";
 
 const port = parseInt(process.env.PORT || "3000", 10);
 const dev = process.env.NODE_ENV !== "production";
@@ -14,7 +15,7 @@ app.prepare().then(() => {
     handle(req, res, parsedUrl);
   }).listen(port);
 
-  // setInterval(() => deleteStaleReports(), 1000 * 60 * 20);
+  setInterval(() => deleteStaleReports(), 1000 * 60 * 20);
 
   console.log(
     `> Server listening at http://localhost:${port} as ${

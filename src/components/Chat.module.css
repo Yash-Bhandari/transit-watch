@@ -20,7 +20,7 @@
   flex-grow: 0;
   display: flex;
   margin-top: 1rem;
-  height: 64px
+  height: 64px;
 }
 
 .inputField > textarea {
@@ -31,4 +31,8 @@
   border: 1px solid #ccc;
   font-size: 1rem;
   height: 100%;
+}
+
+.announcments {
+  color: white;
 }

@@ -1,5 +1,5 @@
-import { Server } from "Socket.IO";
 import { NextApiRequest, NextApiResponse } from "next";
+import { Server } from "socket.io";
 import { addMessage, getReport } from "../../lib/activeReports";
 import { Message } from "../../types";
 
