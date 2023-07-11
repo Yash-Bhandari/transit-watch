@@ -85,7 +85,11 @@ export default function Home({ host }: { host: string }) {
               />
               <p className="mt-8">You may select multiple options.</p>
               <p>
-                Reports are forwarded immediately to the Transit Watch hotline.
+                Reports are forwarded immediately to the{" "}
+                <a href="https://www.edmonton.ca/ets/safety-and-security">
+                  Transit Watch hotline
+                </a>
+                .
               </p>
             </>
           )}
@@ -107,7 +111,7 @@ export default function Home({ host }: { host: string }) {
               userType="reporter"
               announcements={
                 <>
-                  <p>This is a live chat with an ETS operator.</p>
+                  <p>This is a live chat that ETS operators can join.</p>
                   <p>
                     For testing purposes, you can open{" "}
                     <a href={"/responders?id=" + mutation.data.id}>this link</a>{" "}
