@@ -22,6 +22,14 @@ export interface ChatProps {
 
 export const Chat = ({ report, userType, announcements }: ChatProps) => {
   const [messages, setMessages] = useState<Message[] & { local?: boolean }>([]);
+  useEffect(() => {
+    setMessages(report.messages);
+  }, [report]);
+  useEffect(() => {
+    const interval = setInterval(() => {
+      socket.emit("ping");
+    }, 5000)
+  }, [])
   const initializeSocket = async () => {
     await fetch("/api/socket");
     socket = io();
@@ -52,7 +60,7 @@ export const Chat = ({ report, userType, announcements }: ChatProps) => {
     return () => clearTimeout(timeout);
   }, []);
   // const reportString = formatReport(report, { includeTime: false });
-  const [draft, setDraft] = useState("Hello");
+  const [draft, setDraft] = useState("");
   const handleInputChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     setDraft(event.target.value);
   };
