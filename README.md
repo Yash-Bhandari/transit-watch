@@ -1,24 +1,19 @@
-# Custom server with TypeScript + Nodemon example
+## Custom server with TypeScript + Nodemon 
 
-The example shows how you can use [TypeScript](https://typescriptlang.com) on both the server and the client while using [Nodemon](https://nodemon.io/) to live reload the server code without affecting the Next.js universal code.
+Server entry point is `src/server.ts` in development and `dist/server.js` in production.
 
-Server entry point is `server.ts` in development and `dist/server.js` in production.
-The `dist` directory should be added to `.gitignore`.
+## Usage
 
-## Deploy your own
+Run `yarn` to install dependencies.
 
-Deploy the example using [Vercel](https://vercel.com?utm_source=github&utm_medium=readme&utm_campaign=next-example) or preview live with [StackBlitz](https://stackblitz.com/github/vercel/next.js/tree/canary/examples/custom-server)
+`yarn dev` to start the server in development mode.
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/vercel/next.js/tree/canary/examples/custom-server)
+`yarn build` to build the server for production.
 
-## How to use
+`yarn start` to start the server in production mode.
 
-Execute [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app) with [npm](https://docs.npmjs.com/cli/init), [Yarn](https://yarnpkg.com/lang/en/docs/cli/create/), or [pnpm](https://pnpm.io) to bootstrap the example:
+The dist and .next folders are required to run the server in production mode.
 
-```bash
-npx create-next-app --example custom-server custom-server-app
-# or
-yarn create next-app --example custom-server custom-server-app
-# or
-pnpm create next-app --example custom-server custom-server-app
-```
+## License
+
+Made available under the GPL-3.0 License.
