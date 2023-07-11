@@ -1,0 +1,3 @@
+transitwatch.bhandari.dev {
+  reverse_proxy localhost:8001
+}
