@@ -86,7 +86,7 @@ export default function Home({ host }: { host: string }) {
               <p className="mt-8">You may select multiple options.</p>
               <p>
                 Reports are forwarded immediately to the{" "}
-                <a href="https://www.edmonton.ca/ets/safety-and-security">
+                <a href="https://www.edmonton.ca/ets/safety-and-security#:~:text=ca/transitsafetyplan.-,Transit%20Watch%20Program,-Our%20Transit%20Watch">
                   Transit Watch hotline
                 </a>
                 .

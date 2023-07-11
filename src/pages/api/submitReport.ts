@@ -20,8 +20,11 @@ export default withErrorHandling(submitReport);
 
 const validateReport = (data: any): ReportingData => {
   const { issues, locationType, locationDetails } = data;
-  if (locationType !== "station" && locationType !== "route") {
-    throw new APIException("Invalid location type", "report_invalid_location");
+  if (locationType !== "station" && locationType !== "train") {
+    throw new APIException(
+      `Invalid location type: ${locationType}`,
+      "report_invalid_location"
+    );
   }
   if (!issues || !issues.length) {
     throw new APIException("No issues provided", "report_no_issues");

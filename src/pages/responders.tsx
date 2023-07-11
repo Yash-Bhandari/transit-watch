@@ -50,12 +50,12 @@ const ReportDisplay = ({ activeReport }: { activeReport: ActiveReport }) => {
       {data.locationType === "train" && <p>Train: {data.route}</p>}
       {data.locationType === "train" && (
         <p>
-          Next Stop: {data.nextStation} (last updated {locationUpdated}
+          Next Stop: {data.nextStation} (last updated: {locationUpdated})
         </p>
       )}
       {data.locationDetails && <p>Location: {data.locationDetails}</p>}
 
-      <p>Submitted: {formatTime(submitTime)}</p>
+      <p>Submitted at {formatTime(submitTime)}</p>
     </div>
   );
 };
