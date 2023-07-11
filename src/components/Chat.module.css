@@ -19,6 +19,7 @@
 .inputField {
   flex-grow: 0;
   display: flex;
+  align-items: center;
   margin-top: 1rem;
   height: 64px;
 }
@@ -35,4 +36,20 @@
 
 .announcments {
   color: white;
+}
+
+
+.sendButton {
+  /* round button with a paper plane icon in the middle */
+  background-color: var(--color1);
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  margin-left: 1rem;
+  border: none;
+  display: grid;
+  place-items: center;
+  color: white;
+  margin-left: 1rem;
+  margin-right: 0;
 }

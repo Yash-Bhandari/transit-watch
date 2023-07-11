@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { MessageBox } from "react-chat-elements";
 import "react-chat-elements/dist/main.css";
+import { FaPaperPlane } from "react-icons/fa";
 import ShortUniqueId from "short-unique-id";
 import io, { Socket } from "socket.io-client";
 import { ActiveReport, Message } from "../types";
-import { Button } from "./Button";
 import styles from "./Chat.module.css";
 
 const uidGenerator = new ShortUniqueId({ length: 16 });
@@ -107,7 +107,10 @@ export const Chat = ({ report, userType, announcements }: ChatProps) => {
             }
           }}
         />
-        <Button onClick={handleSendMessage} text="Send" />
+        {/* round button with icon */}
+        <button className={styles.sendButton} onClick={handleSendMessage}>
+          <FaPaperPlane />
+        </button>
       </div>
     </div>
   );
